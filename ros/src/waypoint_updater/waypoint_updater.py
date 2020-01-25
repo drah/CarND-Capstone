@@ -62,11 +62,11 @@ class WaypointUpdater(object):
 
     @staticmethod
     def get_waypoints_ahead(
-            car_pose: PoseStamped,
-            base_waypoints: [Waypoint],
-            waypoints_2d: [[float, float]],
-            waypoint_tree: KDTree,
-            n_ahead_waypoints: int) -> [Waypoint]:
+            car_pose, #: PoseStamped,
+            base_waypoints, #: [Waypoint],
+            waypoints_2d, #: [[float, float]],
+            waypoint_tree, #: KDTree,
+            n_ahead_waypoints): #: int) -> [Waypoint]:
         car_x = car_pose.pose.pose.position.x
         car_y = car_pose.pose.pose.position.y
         index_of_closest_wp = waypoint_tree.query([car_x, car_y], 1)[1]
@@ -79,19 +79,28 @@ class WaypointUpdater(object):
         return base_waypoints[index_of_closest_wp:(index_of_closest_wp + n_ahead_waypoints)]
 
     @staticmethod
-    def get_dot(p: [float, float], p1: [float, float], p2: [float, float]):
+    def get_dot(
+            p, #: [float, float],
+            p1, #: [float, float],
+            p2): #: [float, float]):
         return (p1[0] - p[0]) * (p2[0] - p[0]) + (p1[1] - p[1]) * (p2[1] - p[1])
 
-    def publish_waypoints(self, waypoints: [Waypoint]):
+    def publish_waypoints(
+            self,
+            waypoints): #: [Waypoint]):
         lane = Lane()
         lane.header = self.base_waypoints.header
         lane.waypoints = waypoints
         self.final_waypoints_pub.publish(lane)
 
-    def pose_cb(self, msg: PoseStamped):
+    def pose_cb(
+            self,
+            msg): #: PoseStamped):
         self.pose = msg
 
-    def waypoints_cb(self, waypoints: Lane):
+    def waypoints_cb(
+            self,
+            waypoints): #: Lane):
         self.base_waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[wp.pose.pose.position.x, wp.pose.pose.position.y] for wp in waypoints.waypoints]
