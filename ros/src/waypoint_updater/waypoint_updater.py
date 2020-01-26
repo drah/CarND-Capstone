@@ -54,7 +54,7 @@ class WaypointUpdater(object):
     def prepare_and_publish_waypoints(self):
         waypoints = WaypointUpdater.get_waypoints_ahead(
                 self.pose,
-                self.base_waypoints,
+                self.base_waypoints.waypoints,
                 self.waypoints_2d,
                 self.waypoint_tree,
                 self.n_ahead_waypoints)
