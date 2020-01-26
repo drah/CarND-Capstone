@@ -55,9 +55,9 @@ class DBWNode(object):
 
         self.controller = Controller()
 
-        self.dbw_enabled_sub = rospy.Subscribe('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb)
-        self.cur_velocity_sub = rospy.Subscribe('/current_velocity', TwistStamped, self.cur_velocity_cb)
-        self.twist_cmd_sub = rospy.Subscribe('/twist_cmd', TwistStamped, self.twist_cmd_cb)
+        self.dbw_enabled_sub = rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb)
+        self.cur_velocity_sub = rospy.Subscriber('/current_velocity', TwistStamped, self.cur_velocity_cb)
+        self.twist_cmd_sub = rospy.Subscriber('/twist_cmd', TwistStamped, self.twist_cmd_cb)
 
         self.current_velocity = None
         self.linear_velocity = None
