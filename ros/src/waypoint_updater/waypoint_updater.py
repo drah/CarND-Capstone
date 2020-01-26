@@ -67,8 +67,8 @@ class WaypointUpdater(object):
             waypoints_2d, #: [[float, float]],
             waypoint_tree, #: KDTree,
             n_ahead_waypoints): #: int) -> [Waypoint]:
-        car_x = car_pose.pose.pose.position.x
-        car_y = car_pose.pose.pose.position.y
+        car_x = car_pose.pose.position.x
+        car_y = car_pose.pose.position.y
         index_of_closest_wp = waypoint_tree.query([car_x, car_y], 1)[1]
         closest_xy = waypoints_2d[index_of_closest_wp]
         before_closest_xy = waypoints_2d[index_of_closest_wp - 1]
