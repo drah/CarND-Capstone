@@ -47,7 +47,10 @@ class WaypointUpdater(object):
     def loop(self):
         rate = rospy.Rate(50) # greater than 30 is OK
         while not rospy.is_shutdown():
-            if self.pose and self.base_waypoints:
+            if self.pose is not None and \
+                    self.base_waypoints is not None and \
+                    self.waypoints_2d is not None and \
+                    self.waypoint_tree is not None:
                 self.prepare_and_publish_waypoints()
             else:
                 rospy.loginfo("either pose or base_waypoints is None")
