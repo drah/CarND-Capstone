@@ -21,6 +21,7 @@ as well as to verify your TL classifier.
 '''
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+ONE_MPH = 0.44704
 
 
 class WaypointUpdater(object):
@@ -63,6 +64,7 @@ class WaypointUpdater(object):
                 self.waypoints_2d,
                 self.waypoint_tree,
                 self.n_ahead_waypoints)
+        WaypointUpdater.set_velocity(waypoints)
         self.publish_waypoints(waypoints)
 
     @staticmethod
@@ -89,6 +91,13 @@ class WaypointUpdater(object):
             p1, #: [float, float],
             p2): #: [float, float]):
         return (p1[0] - p[0]) * (p2[0] - p[0]) + (p1[1] - p[1]) * (p2[1] - p[1])
+
+    @staticmethod
+    def set_velocity(
+            waypoints): #[Waypoint]
+        for wp_i, wp in enumerate(waypoints):
+            WaypointUpdater.set_waypoint_velocity(waypoints, wp_i, 5.*ONE_MPH)
+        return waypoints
 
     def publish_waypoints(
             self,
@@ -119,10 +128,12 @@ class WaypointUpdater(object):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
         pass
 
-    def get_waypoint_velocity(self, waypoint):
+    @staticmethod
+    def get_waypoint_velocity(waypoint):
         return waypoint.twist.twist.linear.x
 
-    def set_waypoint_velocity(self, waypoints, waypoint_index, velocity):
+    @staticmethod
+    def set_waypoint_velocity(waypoints, waypoint_index, velocity):
         waypoints[waypoint_index].twist.twist.linear.x = velocity
 
     def distance(self, waypoints, wp1, wp2):
