@@ -70,12 +70,14 @@ class DBWNode(object):
     def loop(self):
         rate = rospy.Rate(50) # 50Hz, important, >= 50 is fine, 50~20 is not good, < 20 is not okay.
         while not rospy.is_shutdown():
-            if self.dbw_enabled and \
-                    self.current_velocity is not None and \
+            # if self.dbw_enabled and \
+            '''
+            if self.current_velocity is not None and \
                     self.linear_velocity is not None and \
                     self.angular_velocity is not None:
-                throttle, brake, steer = self.controller.control()
-                self.publish(throttle, brake, steer)
+            '''
+	    throttle, brake, steer = self.controller.control()
+	    self.publish(throttle, brake, steer)
             rate.sleep()
 
     def publish(self, throttle, brake, steer):
@@ -115,7 +117,7 @@ class DBWNode(object):
         self.linear_velocity = twist_stamp_msg.twist.linear.x
         self.angular_velocity = twist_stamp_msg.twist.angular.z
 
-    
+
 
 
 if __name__ == '__main__':
