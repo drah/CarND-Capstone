@@ -49,6 +49,8 @@ class WaypointUpdater(object):
         while not rospy.is_shutdown():
             if self.pose and self.base_waypoints:
                 self.prepare_and_publish_waypoints()
+            else:
+                rospy.loginfo("either pose or base_waypoints is None")
             rate.sleep()
 
     def prepare_and_publish_waypoints(self):
@@ -117,8 +119,8 @@ class WaypointUpdater(object):
     def get_waypoint_velocity(self, waypoint):
         return waypoint.twist.twist.linear.x
 
-    def set_waypoint_velocity(self, waypoints, waypoint, velocity):
-        waypoints[waypoint].twist.twist.linear.x = velocity
+    def set_waypoint_velocity(self, waypoints, waypoint_index, velocity):
+        waypoints[waypoint_index].twist.twist.linear.x = velocity
 
     def distance(self, waypoints, wp1, wp2):
         dist = 0
