@@ -101,6 +101,9 @@ class DBWNode(object):
     def publish(self, throttle, brake, steer):
         # brake # in N*m, 700 for stop
 
+        if brake != 0:
+            throttle = 0
+
         tcmd = ThrottleCmd()
         tcmd.enable = True
         tcmd.pedal_cmd_type = ThrottleCmd.CMD_PERCENT
@@ -123,7 +126,7 @@ class DBWNode(object):
             self,
             dbw_enabled_msg): # Bool, from /vehicle/dbw_enabled
         self.dbw_enabled = dbw_enabled_msg.data
-        rospy.loginfo("DBW enabled: %s" % self.dbw_enabled)
+        # rospy.loginfo("DBW enabled: %s" % self.dbw_enabled)
 
     def cur_velocity_cb(
             self,

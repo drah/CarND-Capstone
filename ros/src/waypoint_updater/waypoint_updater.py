@@ -48,7 +48,7 @@ class WaypointUpdater(object):
         self.loop()
 
     def loop(self):
-        rate = rospy.Rate(50) # greater than 30 is OK
+        rate = rospy.Rate(60) # greater than 30 is OK
         while not rospy.is_shutdown():
             if self.pose is not None and \
                     self.base_waypoints is not None and \
@@ -100,7 +100,7 @@ class WaypointUpdater(object):
             start_index,
             wp_index_to_stop): #[Waypoint]
 
-        rospy.loginfo("start_index: %d, wp_index_to_stop: %d" % (start_index, wp_index_to_stop))
+        # rospy.loginfo("start_index: %d, wp_index_to_stop: %d" % (start_index, wp_index_to_stop))
 
         if wp_index_to_stop == -1 or wp_index_to_stop >= start_index + len(waypoints):
             # use the original velocity of the base waypoints
@@ -116,7 +116,8 @@ class WaypointUpdater(object):
             vel = math.sqrt(2. * MAX_DECEL * dist_to_stop)
             if vel < 1.:
                 vel = 0.
-            p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)
+            # p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)
+            p.twist.twist.linear.x = min(vel, ONE_MPH)
             wps_with_vel.append(p)
 
         return wps_with_vel
@@ -143,7 +144,6 @@ class WaypointUpdater(object):
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
-        rospy.loginfo("Got stop wp: %d" % msg.data)
         self.wp_index_to_stop = msg.data
 
     def obstacle_cb(self, msg):

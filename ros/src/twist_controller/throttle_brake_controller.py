@@ -8,7 +8,7 @@ class ThrottleBrakeController(object):
         self.pid = pid.PID(kp, ki, kd)
         self.max_speed = max_speed
         self.throttle_min = kwargs.get('throttle_min', 0.)
-        self.throttle_max = kwargs.get('throttle_max', 0.7)
+        self.throttle_max = kwargs.get('throttle_max', 0.3)
         self.accel_limit = accel_limit
         self.decel_limit = decel_limit
         self.brake_coef = brake_coef
@@ -32,7 +32,10 @@ class ThrottleBrakeController(object):
         throttle = min(self.throttle_max, throttle)
         throttle = max(self.throttle_min, throttle)
 
-        brake = error * self.brake_coef
+        if target_linear_velocity < 0.1 and current_linear_velocity < 0.1:
+            brake = 800
+        else:
+            brake = abs(error) * self.brake_coef
 
         if error >= 0: # acc
             brake = 0.
