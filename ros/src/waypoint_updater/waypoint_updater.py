@@ -98,19 +98,20 @@ class WaypointUpdater(object):
             waypoints,
             start_index,
             wp_index_to_stop): #[Waypoint]
+        rospy.loginfo("start_index: %d, wp_index_to_stop: %d" % (start_index, wp_index_to_stop))
         for wp_i, wp in enumerate(waypoints):
             if wp_index_to_stop == -1:
-                velocity_mph = 10. * ONE_MPH
+                velocity = 10.
             else:
                 diff = wp_index_to_stop - start_index - wp_i
                 if 0 <= diff <= 5:
-                    velocity_mph = 0.
+                    velocity = 0.
                 elif 5 < diff <= 10:
-                    velocity_mph = 2.5 * ONE_MPH
+                    velocity = 2.5
                 else:
-                    velocity_mph = 10. * ONE_MPH
+                    velocity = 10.
 
-            WaypointUpdater.set_waypoint_velocity(waypoints, wp_i, velocity_mph)
+            WaypointUpdater.set_waypoint_velocity(waypoints, wp_i, velocity)
         return waypoints
 
     def publish_waypoints(
@@ -135,7 +136,7 @@ class WaypointUpdater(object):
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
-        self.wp_index_to_stop = msg
+        self.wp_index_to_stop = msg.data
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later

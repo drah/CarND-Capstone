@@ -57,8 +57,8 @@ class DBWNode(object):
         self.max_speed = 40.
         self.controller = Controller(
                 throttle_kp=0.5,
-                throttle_ki=1e-5,
-                throttle_kd=0.,
+                throttle_ki=1e-4,
+                throttle_kd=0.5,
                 max_speed=self.max_speed,
                 accel_limit=accel_limit,
                 decel_limit=decel_limit,

@@ -6,7 +6,7 @@ ONE_MPH = 0.44704
 class ThrottleBrakeController(object):
     def __init__(self, kp, ki, kd, max_speed, accel_limit, decel_limit, **kwargs):
         self.pid = pid.PID(kp, ki, kd)
-        self.max_speed_mph = max_speed * ONE_MPH
+        self.max_speed = max_speed
         self.throttle_min = kwargs.get('throttle_min', 0.)
         self.throttle_max = kwargs.get('throttle_max', 1.)
         self.accel_limit = accel_limit
@@ -19,10 +19,10 @@ class ThrottleBrakeController(object):
             current_linear_velocity,
             delta_t):
 
-        max_delta_v = self.accel_limit * delta_t
-        min_delta_v = self.decel_limit * delta_t
+        # max_delta_v = self.accel_limit * delta_t
+        # min_delta_v = self.decel_limit * delta_t
 
-        target_linear_velocity = min(target_linear_velocity, self.max_speed_mph)
+        target_linear_velocity = min(target_linear_velocity, self.max_speed)
         error = target_linear_velocity - current_linear_velocity
         # error = min(error, max_delta_v)
         # error = max(error, min_delta_v)
@@ -31,7 +31,7 @@ class ThrottleBrakeController(object):
         throttle = min(self.throttle_max, throttle)
         throttle = max(self.throttle_min, throttle)
 
-        brake = error * 10.
+        brake = error * 50.
 
         if error >= 0: # acc
             brake = 0.

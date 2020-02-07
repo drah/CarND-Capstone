@@ -34,11 +34,10 @@ class Controller(object):
                 accel_limit=accel_limit,
                 decel_limit=decel_limit)
 
-        min_speed_mph = min_speed * ONE_MPH
         self.yaw_controller = yaw_controller.YawController(
                 wheel_base=wheel_base,
                 steer_ratio=steer_ratio,
-                min_speed=min_speed_mph,
+                min_speed=min_speed,
                 max_lat_accel=max_lat_accel,
                 max_steer_angle=max_steer_angle)
         self.lowpass_filter = lowpass.LowPassFilter(kwargs.get('tau', 0.2),kwargs.get('ts', 0.1))
