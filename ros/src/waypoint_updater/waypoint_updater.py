@@ -42,6 +42,7 @@ class WaypointUpdater(object):
         self.waypoints_2d = None
         self.waypoint_tree = None
         self.n_ahead_waypoints = LOOKAHEAD_WPS
+        self.wp_index_to_stop = -1
 
         self.loop()
 
