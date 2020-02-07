@@ -21,7 +21,7 @@ current status in `/vehicle/traffic_lights` message. You can use this message to
 as well as to verify your TL classifier.
 '''
 
-LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 30 # Number of waypoints we will publish. You can change this number
 ONE_MPH = 0.44704
 
 
@@ -59,13 +59,13 @@ class WaypointUpdater(object):
             rate.sleep()
 
     def prepare_and_publish_waypoints(self):
-        waypoints = WaypointUpdater.get_waypoints_ahead(
+        start_index, waypoints = WaypointUpdater.get_waypoints_ahead(
                 self.pose,
                 self.base_waypoints.waypoints,
                 self.waypoints_2d,
                 self.waypoint_tree,
                 self.n_ahead_waypoints)
-        WaypointUpdater.set_velocity(waypoints, self.wp_index_to_stop)
+        WaypointUpdater.set_velocity(waypoints, start_index, self.wp_index_to_stop)
         self.publish_waypoints(waypoints)
 
     @staticmethod
@@ -84,7 +84,7 @@ class WaypointUpdater(object):
         dot_value = WaypointUpdater.get_dot([car_x, car_y], closest_xy, before_closest_xy)
         if dot_value > 0:
             index_of_closest_wp = (index_of_closest_wp + 1) % len(waypoints_2d)
-        return base_waypoints[index_of_closest_wp:(index_of_closest_wp + n_ahead_waypoints)]
+        return index_of_closest_wp, base_waypoints[index_of_closest_wp:(index_of_closest_wp + n_ahead_waypoints)]
 
     @staticmethod
     def get_dot(
@@ -96,18 +96,19 @@ class WaypointUpdater(object):
     @staticmethod
     def set_velocity(
             waypoints,
+            start_index,
             wp_index_to_stop): #[Waypoint]
         for wp_i, wp in enumerate(waypoints):
             if wp_index_to_stop == -1:
-                velocity_mph = 5. * ONE_MPH
+                velocity_mph = 10. * ONE_MPH
             else:
-                diff = wp_index_to_stop - wp_i
-                if 0 <= diff <= 1:
+                diff = wp_index_to_stop - start_index - wp_i
+                if 0 <= diff <= 5:
                     velocity_mph = 0.
-                elif 1 < diff < 5:
+                elif 5 < diff <= 10:
                     velocity_mph = 2.5 * ONE_MPH
                 else:
-                    velocity_mph = 5. * ONE_MPH
+                    velocity_mph = 10. * ONE_MPH
 
             WaypointUpdater.set_waypoint_velocity(waypoints, wp_i, velocity_mph)
         return waypoints
