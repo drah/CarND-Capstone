@@ -92,6 +92,7 @@ class TLDetector(object):
             light_wp = light_wp if state == TrafficLight.RED else -1
             self.last_wp = light_wp
             self.upcoming_red_light_pub.publish(Int32(light_wp))
+            rospy.loginfo("should stop at wp %d" % light_wp)
         else:
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         self.state_count += 1
@@ -156,7 +157,6 @@ class TLDetector(object):
                     closest_line_wp_index = line_closest_wp_index
 
         if closest_light is not None:
-            rospy.loginfo("Got light, stop at wp %d, light state: %s" % (closest_line_wp_index, state))
             state = self.get_light_state(closest_light)
             return closest_line_wp_index, state
 

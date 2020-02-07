@@ -23,6 +23,7 @@ as well as to verify your TL classifier.
 
 LOOKAHEAD_WPS = 20 # Number of waypoints we will publish. You can change this number
 ONE_MPH = 0.44704
+MAX_DECEL = .5
 
 
 class WaypointUpdater(object):
@@ -65,7 +66,7 @@ class WaypointUpdater(object):
                 self.waypoints_2d,
                 self.waypoint_tree,
                 self.n_ahead_waypoints)
-        WaypointUpdater.set_velocity(waypoints, start_index, self.wp_index_to_stop)
+        waypoints = WaypointUpdater.set_velocity(waypoints, start_index, self.wp_index_to_stop)
         self.publish_waypoints(waypoints)
 
     @staticmethod
@@ -98,21 +99,27 @@ class WaypointUpdater(object):
             waypoints,
             start_index,
             wp_index_to_stop): #[Waypoint]
-        rospy.loginfo("start_index: %d, wp_index_to_stop: %d" % (start_index, wp_index_to_stop))
-        for wp_i, wp in enumerate(waypoints):
-            if wp_index_to_stop == -1:
-                velocity = 5.
-            else:
-                diff = wp_index_to_stop - start_index - wp_i
-                if 0 <= diff <= 5:
-                    velocity = 0.
-                elif 5 < diff <= 10:
-                    velocity = 2.5
-                else:
-                    velocity = 5.
 
-            WaypointUpdater.set_waypoint_velocity(waypoints, wp_i, velocity)
-        return waypoints
+        rospy.loginfo("start_index: %d, wp_index_to_stop: %d" % (start_index, wp_index_to_stop))
+
+        if wp_index_to_stop == -1 or wp_index_to_stop >= start_index + len(waypoints):
+            # use the original velocity of the base waypoints
+            return waypoints
+
+        wps_with_vel = []
+        for wp_i, wp in enumerate(waypoints):
+            p = Waypoint()
+            p.pose = wp.pose
+
+            stop_wp_index = max(wp_index_to_stop - start_index - 2, 0)
+            dist_to_stop = WaypointUpdater.distance(waypoints, wp_i, stop_wp_index)
+            vel = math.sqrt(2. * MAX_DECEL * dist_to_stop)
+            if vel < 1.:
+                vel = 0.
+            p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)
+            wps_with_vel.append(p)
+
+        return wps_with_vel
 
     def publish_waypoints(
             self,
@@ -136,6 +143,7 @@ class WaypointUpdater(object):
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
+        rospy.loginfo("Got stop wp: %d" % msg.data)
         self.wp_index_to_stop = msg.data
 
     def obstacle_cb(self, msg):
@@ -150,7 +158,8 @@ class WaypointUpdater(object):
     def set_waypoint_velocity(waypoints, waypoint_index, velocity):
         waypoints[waypoint_index].twist.twist.linear.x = velocity
 
-    def distance(self, waypoints, wp1, wp2):
+    @staticmethod
+    def distance(waypoints, wp1, wp2):
         dist = 0
         dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2  + (a.z-b.z)**2)
         for i in range(wp1, wp2+1):
