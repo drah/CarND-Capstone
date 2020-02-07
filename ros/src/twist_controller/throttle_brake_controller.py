@@ -31,7 +31,7 @@ class ThrottleBrakeController(object):
         throttle = min(self.throttle_max, throttle)
         throttle = max(self.throttle_min, throttle)
 
-        brake = error * 50.
+        brake = error * 1400.
 
         if error >= 0: # acc
             brake = 0.
