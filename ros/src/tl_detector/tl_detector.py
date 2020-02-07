@@ -59,7 +59,7 @@ class TLDetector(object):
 
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
-        if self.waypoints_tree is None:
+        if self.waypoint_tree is None:
             waypoints_2d = [[wp.pose.pose.position.x, wp.pose.pose.position.y] for wp in waypoints.waypoints]
             self.waypoint_tree = KDTree(waypoints_2d)
 
