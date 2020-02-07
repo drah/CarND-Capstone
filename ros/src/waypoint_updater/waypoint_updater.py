@@ -21,7 +21,7 @@ current status in `/vehicle/traffic_lights` message. You can use this message to
 as well as to verify your TL classifier.
 '''
 
-LOOKAHEAD_WPS = 30 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 20 # Number of waypoints we will publish. You can change this number
 ONE_MPH = 0.44704
 
 
@@ -101,7 +101,7 @@ class WaypointUpdater(object):
         rospy.loginfo("start_index: %d, wp_index_to_stop: %d" % (start_index, wp_index_to_stop))
         for wp_i, wp in enumerate(waypoints):
             if wp_index_to_stop == -1:
-                velocity = 10.
+                velocity = 5.
             else:
                 diff = wp_index_to_stop - start_index - wp_i
                 if 0 <= diff <= 5:
@@ -109,7 +109,7 @@ class WaypointUpdater(object):
                 elif 5 < diff <= 10:
                     velocity = 2.5
                 else:
-                    velocity = 10.
+                    velocity = 5.
 
             WaypointUpdater.set_waypoint_velocity(waypoints, wp_i, velocity)
         return waypoints

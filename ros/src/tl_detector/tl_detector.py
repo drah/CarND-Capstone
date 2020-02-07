@@ -146,7 +146,7 @@ class TLDetector(object):
         if self.pose:
             car_closest_wp_index = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
-            min_diff = len(self.waypoints.waypoints)
+            min_diff = float("inf")
             for line, light in zip(self.config['stop_line_positions'], self.lights):
                 line_closest_wp_index = self.get_closest_waypoint(line[0], line[1])
                 diff = line_closest_wp_index - car_closest_wp_index
@@ -155,7 +155,7 @@ class TLDetector(object):
                     closest_light = light
                     closest_line_wp_index = line_closest_wp_index
 
-        if closest_light:
+        if closest_light is not None:
             rospy.loginfo("Got light, stop at wp %d, light state: %s" % (closest_line_wp_index, state))
             state = self.get_light_state(closest_light)
             return closest_line_wp_index, state

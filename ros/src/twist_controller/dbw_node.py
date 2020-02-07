@@ -99,19 +99,17 @@ class DBWNode(object):
     def publish(self, throttle, brake, steer):
         # brake # in N*m, 700 for stop
 
-        if brake == 0:
-            tcmd = ThrottleCmd()
-            tcmd.enable = True
-            tcmd.pedal_cmd_type = ThrottleCmd.CMD_PERCENT
-            tcmd.pedal_cmd = throttle
-            self.throttle_pub.publish(tcmd)
+        tcmd = ThrottleCmd()
+        tcmd.enable = True
+        tcmd.pedal_cmd_type = ThrottleCmd.CMD_PERCENT
+        tcmd.pedal_cmd = throttle
+        self.throttle_pub.publish(tcmd)
 
-        else:
-            bcmd = BrakeCmd()
-            bcmd.enable = True
-            bcmd.pedal_cmd_type = BrakeCmd.CMD_TORQUE
-            bcmd.pedal_cmd = brake
-            self.brake_pub.publish(bcmd)
+        bcmd = BrakeCmd()
+        bcmd.enable = True
+        bcmd.pedal_cmd_type = BrakeCmd.CMD_TORQUE
+        bcmd.pedal_cmd = brake
+        self.brake_pub.publish(bcmd)
 
         scmd = SteeringCmd()
         scmd.enable = True
