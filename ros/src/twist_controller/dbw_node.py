@@ -56,9 +56,9 @@ class DBWNode(object):
         self.min_speed = 1.0
         self.max_speed = 40.
         self.controller = Controller(
-                throttle_kp=0.5,
-                throttle_ki=1e-4,
-                throttle_kd=0.5,
+                throttle_kp=0.3,
+                throttle_ki=0.1,
+                throttle_kd=0.0,
                 max_speed=self.max_speed,
                 accel_limit=accel_limit,
                 decel_limit=decel_limit,
@@ -66,7 +66,9 @@ class DBWNode(object):
                 steer_ratio=steer_ratio,
                 min_speed=self.min_speed,
                 max_lat_accel=max_lat_accel,
-                max_steer_angle=max_steer_angle)
+                max_steer_angle=max_steer_angle,
+                vehicle_mass=vehicle_mass,
+                wheel_radius=wheel_radius)
 
         self.dbw_enabled_sub = rospy.Subscriber('/dbw_enabled', Bool, self.dbw_enabled_cb)
         self.cur_velocity_sub = rospy.Subscriber('/current_velocity', TwistStamped, self.cur_velocity_cb)

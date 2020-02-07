@@ -24,6 +24,8 @@ class Controller(object):
             min_speed,
             max_lat_accel,
             max_steer_angle,
+            vehicle_mass,
+            wheel_radius,
             **kwargs):
 
         self.throttle_brake_controller = throttle_brake_controller.ThrottleBrakeController(
@@ -32,7 +34,8 @@ class Controller(object):
                 kd=throttle_kd,
                 max_speed=max_speed,
                 accel_limit=accel_limit,
-                decel_limit=decel_limit)
+                decel_limit=decel_limit,
+                brake_coef=vehicle_mass * wheel_radius)
 
         self.yaw_controller = yaw_controller.YawController(
                 wheel_base=wheel_base,

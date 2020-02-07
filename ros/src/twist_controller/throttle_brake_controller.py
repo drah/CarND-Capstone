@@ -4,13 +4,14 @@ import pid
 ONE_MPH = 0.44704
 
 class ThrottleBrakeController(object):
-    def __init__(self, kp, ki, kd, max_speed, accel_limit, decel_limit, **kwargs):
+    def __init__(self, kp, ki, kd, max_speed, accel_limit, decel_limit, brake_coef, **kwargs):
         self.pid = pid.PID(kp, ki, kd)
         self.max_speed = max_speed
         self.throttle_min = kwargs.get('throttle_min', 0.)
-        self.throttle_max = kwargs.get('throttle_max', 1.)
+        self.throttle_max = kwargs.get('throttle_max', 0.7)
         self.accel_limit = accel_limit
         self.decel_limit = decel_limit
+        self.brake_coef = brake_coef
 
     def get_throttle_brake(
             self,
@@ -31,7 +32,7 @@ class ThrottleBrakeController(object):
         throttle = min(self.throttle_max, throttle)
         throttle = max(self.throttle_min, throttle)
 
-        brake = error * 1400.
+        brake = error * self.brake_coef
 
         if error >= 0: # acc
             brake = 0.
