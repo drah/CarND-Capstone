@@ -13,7 +13,8 @@ import yaml
 from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
-USE_SIM_LIGHT_STATE = True
+USE_SIM_LIGHT_STATE = False
+PB_PATH = './frozen_models/sim.pb'
 
 class TLDetector(object):
     def __init__(self):
@@ -44,7 +45,7 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
+        self.light_classifier = TLClassifier(PB_PATH)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
