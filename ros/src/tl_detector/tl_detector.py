@@ -14,7 +14,7 @@ from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
 USE_SIM_LIGHT_STATE = False
-PB_PATH = './frozen_models/sim.pb'
+PB_PATH = './frozen_models/sim_2.pb'
 
 class TLDetector(object):
     def __init__(self):
